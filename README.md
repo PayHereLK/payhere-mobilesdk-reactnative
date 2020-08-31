@@ -10,7 +10,7 @@ Open your React Native project's `package.json` file and add the PayHere React N
 ```json
 {
   "dependencies": {
-    "@payhere/payhere-mobilesdk-reactnative": "1.0.4"
+    "@payhere/payhere-mobilesdk-reactnative": "1.0.5"
   }
 }
 ```
@@ -271,9 +271,9 @@ You must setup a Server Endpoint that accepts the asynchronous PayHere Payment N
 
 Each payment request type (one-time/recurring/pre-approval) sends a different payment notification. Study the following sections for more information.
 
-- One-time Payment Details: [documentation](https://support.payhere.lk/api-&-mobile-sdk/payhere-checkout#2-listening-to-payment-notification)
-- Recurring Payment Details: [documentation](https://support.payhere.lk/api-&-mobile-sdk/payhere-recurringl#2-listening-to-payment-notification)
-- Preapproval Details: [documentation](https://support.payhere.lk/api-&-mobile-sdk/payhere-preapproval#2-listening-to-payment-notification)
+- One-time Payment Details: [read docs](https://support.payhere.lk/api-&-mobile-sdk/payhere-checkout#2-listening-to-payment-notification)
+- Recurring Payment Details: [read docs](https://support.payhere.lk/api-&-mobile-sdk/payhere-recurring#2-listening-to-payment-notification)
+- Preapproval Details: [read docs](https://support.payhere.lk/api-&-mobile-sdk/payhere-preapproval#2-listening-to-preapproval-notification)
 
 #### I have a different question. Where should I raise my issues? ####
 
