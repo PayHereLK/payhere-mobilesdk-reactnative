@@ -10,8 +10,6 @@
 
 ## Usage
 ```javascript
-import PayhereOfficial from 'payhere-mobilesdk-reactnative';
+import PayHere from 'payhere-mobilesdk-reactnative';
 
-// TODO: What to do with the module?
-PayhereOfficial;
 ```
