@@ -1,7 +1,7 @@
 {
   "name": "@payhere/payhere-mobilesdk-reactnative",
   "title": "React Native PayHere Official",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Make PayHere payments with your React-native App!",
   "main": "index.js",
   "files": [
@@ -20,7 +20,7 @@
     "baseUrl": "https://github.com/PayHereLK/payhere-mobilesdk-reactnative"
   },
   "keywords": [
-    "react-native"
+    "react","native","payhere","ios","android"
   ],
   "author": "PayHere <support@payhere.lk>",
   "license": "MIT",

@@ -4,7 +4,7 @@ Integrating PayHere with your React Native App is super easy with our PayHere Re
 
 ## Usage ##
 
-#### 1. Include PayHere Mobile SDK in your App ####
+### 1. Include PayHere Mobile SDK in your App ###
 
 Open your React Native project's `package.json` file and add the PayHere React Native SDK dependency.
 ```json
@@ -22,7 +22,7 @@ npm install
 react-native link payhere-mobilesdk-reactnative
 ```
 
-#### 2. Android Pre-requisites ####
+### 2. Android Pre-requisites ###
 
 ##### a. Add the PayHere Android SDK's Maven repository #####
 
@@ -55,7 +55,7 @@ ii. Add the `replace` merge rule for the `android:allowBackup` attribute in the 
 <application tools:replace="android:allowBackup">
 ```
 
-#### 3. iOS Pre-requisites ####
+### 3. iOS Pre-requisites ###
 
 Open up the `Podfile` file in your iOS project and make the following changes.
 
@@ -71,7 +71,7 @@ use_react_native!(:path => config["reactNativePath"])
 pod 'payhere-mobilesdk-reactnative', :path => '../node_modules/@payhere/payhere-mobilesdk-reactnative'
 ```
 
-#### 4. Whitelist Mobile App Package Name ####
+### 4. Whitelist Mobile App Package Name ###
 
 a. Login to your PayHere Merchant Account and navigate to Settings  > Domains and Credentials.
 
@@ -89,7 +89,7 @@ f. Click 'Request to Approve'.
 >
 > For more information, please contact [techsupport@payhere.lk](mailto:techsupport@payhere.lk)
 
-#### 5. Initiate a Payment Request to PayHere Payment Gateway #### 
+### 5. Initiate a Payment Request to PayHere Payment Gateway ### 
 
 ##### a. One-time Payment Request #####
 
@@ -100,39 +100,39 @@ import { Alert } from 'react-native';
 import PayHere from '@payhere/payhere-mobilesdk-reactnative';
 
 const paymentObject = {
-	"sandbox": true,							// true if using Sandbox Merchant ID
-	"merchant_id": "1211149",    	// Replace your Merchant ID
-	"merchant_secret": "xyz",			// See step 4e
-	"notify_url": "http://sample.com/notify",
-	"order_id": "ItemNo12345",
-	"items": "Hello from React Native!",
-	"amount": "50.00",
-	"currency": "LKR",
-	"first_name": "Saman",
-	"last_name": "Perera",
-	"email": "samanp@gmail.com",
-	"phone": "0771234567",
-	"address": "No.1, Galle Road",
-	"city": "Colombo",
-	"country": "Sri Lanka",
-	"delivery_address": "No. 46, Galle road, Kalutara South",
-	"delivery_city": "Kalutara",
-	"delivery_country": "Sri Lanka",
-	"custom_1": "",
-	"custom_2": ""
+    "sandbox": true,                 // true if using Sandbox Merchant ID
+    "merchant_id": "1211149",        // Replace your Merchant ID
+    "merchant_secret": "xyz",        // See step 4e
+    "notify_url": "http://sample.com/notify",
+    "order_id": "ItemNo12345",
+    "items": "Hello from React Native!",
+    "amount": "50.00",
+    "currency": "LKR",
+    "first_name": "Saman",
+    "last_name": "Perera",
+    "email": "samanp@gmail.com",
+    "phone": "0771234567",
+    "address": "No.1, Galle Road",
+    "city": "Colombo",
+    "country": "Sri Lanka",
+    "delivery_address": "No. 46, Galle road, Kalutara South",
+    "delivery_city": "Kalutara",
+    "delivery_country": "Sri Lanka",
+    "custom_1": "",
+    "custom_2": ""
 };
 
 PayHere.startPayment(
-	paymentObject, 
-	(paymentId) => {
-		console.log("Payment Completed", paymentId);
-	},
-	(errorData) => {
-		Alert.alert("PayHere Error", errorData);
-	},
-	() => {
-		console.log("Payment Dismissed");
-	}
+    paymentObject, 
+    (paymentId) => {
+        console.log("Payment Completed", paymentId);
+    },
+    (errorData) => {
+        Alert.alert("PayHere Error", errorData);
+    },
+    () => {
+        console.log("Payment Dismissed");
+    }
 );
 ```
 
@@ -147,42 +147,42 @@ import { Alert } from 'react-native';
 import PayHere from '@payhere/payhere-mobilesdk-reactnative';
 
 const paymentObject = {
-	"sandbox": true,							// true if using Sandbox Merchant ID
-	"merchant_id": "1211149",    	// Replace your Merchant ID
-	"merchant_secret": "xyz",			// See step 4e
-	"notify_url": "http://sample.com/notify",
-	"order_id": "ItemNo12345",
-	"items": "Hello from React Native!",
-	"amount": "50.00",						// Recurring amount
-	"recurrence": "1 Month",			// Recurring payment frequency
-	"duration": "1 Year",					// Recurring payment duration
-	"startup_fee": "10.00",				// Extra amount for first payment
-	"currency": "LKR",
-	"first_name": "Saman",
-	"last_name": "Perera",
-	"email": "samanp@gmail.com",
-	"phone": "0771234567",
-	"address": "No.1, Galle Road",
-	"city": "Colombo",
-	"country": "Sri Lanka",
-	"delivery_address": "No. 46, Galle road, Kalutara South",
-	"delivery_city": "Kalutara",
-	"delivery_country": "Sri Lanka",
-	"custom_1": "",
-	"custom_2": ""
+    "sandbox": true,                 // true if using Sandbox Merchant ID
+    "merchant_id": "1211149",        // Replace your Merchant ID
+    "merchant_secret": "xyz",        // See step 4e
+    "notify_url": "http://sample.com/notify",
+    "order_id": "ItemNo12345",
+    "items": "Hello from React Native!",
+    "amount": "50.00",               // Recurring amount
+    "recurrence": "1 Month",         // Recurring payment frequency
+    "duration": "1 Year",            // Recurring payment duration
+    "startup_fee": "10.00",          // Extra amount for first payment
+    "currency": "LKR",
+    "first_name": "Saman",
+    "last_name": "Perera",
+    "email": "samanp@gmail.com",
+    "phone": "0771234567",
+    "address": "No.1, Galle Road",
+    "city": "Colombo",
+    "country": "Sri Lanka",
+    "delivery_address": "No. 46, Galle road, Kalutara South",
+    "delivery_city": "Kalutara",
+    "delivery_country": "Sri Lanka",
+    "custom_1": "",
+    "custom_2": ""
 };
 
 PayHere.startPayment(
-	paymentObject, 
-	(paymentId) => {
-		console.log("Payment Completed", paymentId);
-	},
-	(errorData) => {
-		Alert.alert("PayHere Error", errorData);
-	},
-	() => {
-		console.log("Payment Dismissed");
-	}
+    paymentObject, 
+    (paymentId) => {
+        console.log("Payment Completed", paymentId);
+    },
+    (errorData) => {
+        Alert.alert("PayHere Error", errorData);
+    },
+    () => {
+        console.log("Payment Dismissed");
+    }
 );
 ```
 
@@ -197,34 +197,34 @@ import { Alert } from 'react-native';
 import PayHere from '@payhere/payhere-mobilesdk-reactnative';
 
 const paymentObject = {
-	"sandbox": true,							// true if using Sandbox Merchant ID
-	"preapprove": true,						// Required
-	"merchant_id": "1211149",    	// Replace your Merchant ID
-	"merchant_secret": "xyz",			// See step 4e
-	"notify_url": "http://sample.com/notify",
-	"order_id": "ItemNo12345",
-	"items": "Hello from React Native!",
-	"currency": "LKR",
-	"first_name": "Saman",
-	"last_name": "Perera",
-	"email": "samanp@gmail.com",
-	"phone": "0771234567",
-	"address": "No.1, Galle Road",
-	"city": "Colombo",
-	"country": "Sri Lanka",
+    "sandbox": true,                 // true if using Sandbox Merchant ID
+    "preapprove": true,              // Required
+    "merchant_id": "1211149",        // Replace your Merchant ID
+    "merchant_secret": "xyz",        // See step 4e
+    "notify_url": "http://sample.com/notify",
+    "order_id": "ItemNo12345",
+    "items": "Hello from React Native!",
+    "currency": "LKR",
+    "first_name": "Saman",
+    "last_name": "Perera",
+    "email": "samanp@gmail.com",
+    "phone": "0771234567",
+    "address": "No.1, Galle Road",
+    "city": "Colombo",
+    "country": "Sri Lanka",
 };
 
 PayHere.startPayment(
-	paymentObject, 
-	(paymentId) => {
-		console.log("Payment Completed", paymentId);
-	},
-	(errorData) => {
-		Alert.alert("PayHere Error", errorData);
-	},
-	() => {
-		console.log("Payment Dismissed");
-	}
+    paymentObject, 
+    (paymentId) => {
+        console.log("Payment Completed", paymentId);
+    },
+    (errorData) => {
+        Alert.alert("PayHere Error", errorData);
+    },
+    () => {
+        console.log("Payment Dismissed");
+    }
 );
 ```
 
@@ -246,10 +246,10 @@ The Android component for this SDK supports Android Versions above API Level 17.
 
 ```js
 PayHere.startPayment(
-	paymentObject, 
-	onCompletedHandler,
-	onErrorHandler,
-	onDismissedHandler
+    paymentObject, 
+    onCompletedHandler,
+    onErrorHandler,
+    onDismissedHandler
 );
 ```
 
