@@ -20,7 +20,7 @@ const PayHere = function(){
                     onCompleted(jsdata);
                 }
                 else{
-                    if (jscallback === JS_CALLBACK_IS_ERROR){
+                    if (jscallback == JS_CALLBACK_IS_ERROR){
                         onError(jsdata);
                     }
                     else if (jscallback == JS_CALLBACK_IS_DISMISS){
