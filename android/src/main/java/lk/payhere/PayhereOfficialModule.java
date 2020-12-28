@@ -198,31 +198,64 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        if (requestCode == PAYHERE_REQUEST && data != null && data.hasExtra(PHConstants.INTENT_EXTRA_RESULT)) {
-            PHResponse<StatusResponse> response = (PHResponse<StatusResponse>) data.getSerializableExtra(PHConstants.INTENT_EXTRA_RESULT);
+        if (requestCode == PAYHERE_REQUEST) {
+            if (data != null && data.hasExtra(PHConstants.INTENT_EXTRA_RESULT)) {
+                PHResponse<StatusResponse> response = (PHResponse<StatusResponse>) data.getSerializableExtra(PHConstants.INTENT_EXTRA_RESULT);
 
-            if (resultCode == Activity.RESULT_OK) {
-                String msg;
-                if (response != null)
-                    if (response.isSuccess()) {
-                        msg = "Activity result:" + response.getData().toString();
-                        String paymentNo = Long.toString(response.getData().getPaymentNo());
-                        this.sendCompleted(paymentNo);
-                    }
+                if (resultCode == Activity.RESULT_OK) {
+                    String msg;
+                    if (response != null)
+                        if (response.isSuccess()) {
+                            msg = "Activity result:" + response.getData().toString();
+                            String paymentNo = Long.toString(response.getData().getPaymentNo());
+                            this.sendCompleted(paymentNo);
+                        } else {
+                            msg = "Result:" + response.toString();
+                            this.sendError(response.getData().getMessage());
+                        }
                     else {
-                        msg = "Result:" + response.toString();
-                        this.sendError(response.getData().getMessage());
+                        msg = "Result: no response";
+                        this.log(msg);
+                        this.sendDismissed();
                     }
-                else
-                    msg = "Result: no response";
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    if (response != null){
+                        switch(response.getStatus()){
+                            case PHResponse.STATUS_ERROR_CANCELED:
+                                this.sendDismissed();
+                                break;
 
-                this.log(msg);
+                            case PHResponse.STATUS_ERROR_PAYMENT:
+                                if (response.getData().getMessage() == null)
+                                    this.sendDismissed();
+                                else
+                                    this.sendError(response.getData().getMessage());
+                                break;
+
+                            case PHResponse.STATUS_ERROR_NETWORK:
+                                this.sendError("Network Error");
+                                break;
+
+                            case PHResponse.STATUS_ERROR_VALIDATION:
+                                this.sendError("Parameter Validation Error");
+                                break;
+
+                            case PHResponse.STATUS_ERROR_DATA:
+                                this.sendError("Intent Data not Present");
+                                break;
+
+                            case PHResponse.STATUS_ERROR_UNKNOWN:
+                            default:
+                                this.sendError("Unknown error occurred");
+                                break;
+                        }
+                    }
+                    else
+                        this.sendDismissed();
+                }
             }
-            else if (resultCode == Activity.RESULT_CANCELED) {
-                if (response != null)
-                    this.sendError(response.toString());
-                else
-                    this.sendDismissed();
+            else if (data == null){
+                this.sendDismissed();
             }
         }
     }

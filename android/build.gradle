@@ -81,7 +81,7 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'lk.payhere.sdk:android-payment-sdk:2.0.24'
+    implementation 'lk.payhere.sdk:android-payment-sdk:2.0.31'
     implementation 'com.google.code.gson:gson:2.8.0'
 }
 

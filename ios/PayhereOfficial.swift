@@ -91,6 +91,10 @@ import UIKit
     private func log(_ msg: String){
         print("PayHere iOS: " + msg)
     }
+    
+    private func clearCallback(){
+        lastCallback = nil
+    }
 
     /**
      Sends to error handler in JS
@@ -110,6 +114,7 @@ import UIKit
             ResultKey.data: finalError
         ])
         callback([resultDict])
+        clearCallback()
     }
     
     /**
@@ -126,7 +131,7 @@ import UIKit
             ResultKey.callbackType: ResultCallbackType.dismiss,
         ])
         callback([resultDict])
-        
+        clearCallback()
     }
     
     /**
@@ -144,6 +149,7 @@ import UIKit
             ResultKey.data: paymentNo
         ])
         callback([resultDict])
+        clearCallback()
     }
 
     /**
@@ -411,7 +417,7 @@ extension PayhereOfficial : PHViewControllerDelegate{
     
     public func onResponseReceived(response: PHResponse<Any>?) {
         if(response?.isSuccess() ?? false){
-            guard let resp = response?.getData() as? StatusResponse else{
+            guard let resp = response?.getCastData() else{
                 sendError("Internal Error: Could not map success response")
                 return
             }
@@ -425,12 +431,27 @@ extension PayhereOfficial : PHViewControllerDelegate{
         }
         else{
             // Payment Failed
-            if let msg = response?.getMessage(){
-                sendError("Payment Error: \"" + msg + "\"")
+            if let resp = response?.getCastData(),
+               let msg = resp.message{
+                sendError(msg)
+            }
+            else if let msg = response?.getMessage(){
+                sendError(msg)
             }
             else{
                 sendError("Unknown Payment Error")
             }
         }
     }
+}
+
+extension PHResponse where T == Any{
+    
+    /**
+     Extracts the `StatusResponse` from the response object
+     */
+    fileprivate func getCastData() -> StatusResponse?{
+        return self.getData() as? StatusResponse
+    }
+    
 }
