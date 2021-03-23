@@ -87,6 +87,7 @@ dependencies {
 
 def configureReactNativePom(def pom) {
     def packageJson = new groovy.json.JsonSlurper().parseText(file('../package.json').text)
+    String[] authorInfo = packageJson.author.split(" ");
 
     pom.project {
         name packageJson.title
@@ -106,8 +107,8 @@ def configureReactNativePom(def pom) {
 
         developers {
             developer {
-                id packageJson.author.username
-                name packageJson.author.name
+                id authorInfo[0]
+                name authorInfo[1]
             }
         }
     }
