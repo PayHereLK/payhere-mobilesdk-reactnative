@@ -10,7 +10,7 @@ Open your React Native project's `package.json` file and add the PayHere React N
 ```json
 {
   "dependencies": {
-    "@payhere/payhere-mobilesdk-reactnative": "1.0.9"
+    "@payhere/payhere-mobilesdk-reactnative": "1.0.10"
   }
 }
 ```
@@ -281,9 +281,9 @@ Each payment request type (one-time/recurring/pre-approval) sends a different pa
 
 #### I am getting an error saying, "Could not GET 'https://dl.bintray.com..." ####
 
-PayHere React Native SDK versions prior to `1.0.9` (`1.0.8` and previous versions) depended on an older version of the PayHere Android SDK which is no longer available through the bintray.com Maven repository. Update to the latest version `1.0.9` and try again.
+PayHere React Native SDK versions prior to `1.0.10` (`1.0.8` and previous versions) depended on an older version of the PayHere Android SDK which is no longer available through the bintray.com Maven repository. Update to the latest version `1.0.10` and try again.
 
-If you are still experiencing issues, make sure you have followed the new "2. Android Pre-requisites" section with updated instructions for SDK versions `1.0.9` and above.
+If you are still experiencing issues, make sure you have followed the new "2. Android Pre-requisites" section with updated instructions for SDK versions `1.0.10` and above.
 
 #### I have a different question. Where should I raise my issues? ####
 
