@@ -33,7 +33,11 @@ buildscript {
             jcenter()
             maven {
                 // PayHere Android
-                url "https://dl.bintray.com/payhere/payhere-android-payment"
+                url  'https://maven.pkg.github.com/PayHereLK/payhere-mobilesdk-android'
+                credentials{
+                    username = 'PayHereDevs',
+                    password = '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'
+                }
             }
         }
         dependencies {
@@ -72,7 +76,11 @@ repositories {
     }
     maven {
         // PayHere Android (doesn't seem to work?)
-        url "https://dl.bintray.com/payhere/payhere-android-payment"
+        url  'https://maven.pkg.github.com/PayHereLK/payhere-mobilesdk-android'
+        credentials{
+            username = 'PayHereDevs',
+            password = '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'
+        }
     }
     google()
     jcenter()
@@ -81,7 +89,7 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'lk.payhere.sdk:android-payment-sdk:2.0.31'
+    implementation 'lk.payhere:androidsdk:2.0.31'
     implementation 'com.google.code.gson:gson:2.8.0'
 }
 
