@@ -33,11 +33,7 @@ buildscript {
             jcenter()
             maven {
                 // PayHere Android
-                url  'https://maven.pkg.github.com/PayHereLK/payhere-mobilesdk-android'
-                credentials{
-                    username = 'PayHereDevs',
-                    password = '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'
-                }
+                url  'https://repo.repsy.io/mvn/payhere/payhere-mobilesdk-android/'
             }
         }
         dependencies {
@@ -76,11 +72,7 @@ repositories {
     }
     maven {
         // PayHere Android (doesn't seem to work?)
-        url  'https://maven.pkg.github.com/PayHereLK/payhere-mobilesdk-android'
-        credentials{
-            username = 'PayHereDevs',
-            password = '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'
-        }
+        url  'https://repo.repsy.io/mvn/payhere/payhere-mobilesdk-android/'
     }
     google()
     jcenter()
