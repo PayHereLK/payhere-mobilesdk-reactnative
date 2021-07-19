@@ -65,7 +65,7 @@ platform :ios, '11.0'
 ```
 2. Add the PayHere React Native SDK podspec.
 ```ruby
-# Add this is if something similar doesn't already exit
+# Add this is if something similar doesn't already exist
 use_react_native!(:path => config["reactNativePath"])
 
 # Add this line just below 'use_react_native!'
