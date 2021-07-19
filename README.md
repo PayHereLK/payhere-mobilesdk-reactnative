@@ -2,15 +2,15 @@
 
 Integrating PayHere with your React Native App is super easy with our PayHere React Native SDK. You just have to include the package in your project dependencies, call its methods to initiate a payment and fetch the payment status just after the payment. The beauty is, this SDK allows you to accept a payment within your app, without redirecting your app user to the web browser.
 
-## Usage ##
+## Usage
 
-### 1. Include PayHere Mobile SDK in your App ###
+### 1. Include PayHere Mobile SDK in your App
 
 Open your React Native project's `package.json` file and add the PayHere React Native SDK dependency.
 ```json
 {
   "dependencies": {
-    "@payhere/payhere-mobilesdk-reactnative": "1.0.11"
+    "@payhere/payhere-mobilesdk-reactnative": "1.2.0"
   }
 }
 ```
@@ -22,9 +22,9 @@ npm install
 react-native link @payhere/payhere-mobilesdk-reactnative
 ```
 
-### 2. Android Pre-requisites ###
+### 2. Android Pre-requisites
 
-##### a. Add the PayHere Android SDK's Maven repository #####
+##### a. Add the PayHere Android SDK's Maven repository
 
 Open up the (outermost) `build.gradle` file in your Android project and add the repository. 
 
@@ -39,7 +39,7 @@ allprojects {
 }
 
 ```
-##### b. Allow Manifest attribute merge  #####
+##### b. Allow Manifest attribute merge 
 
 Open up the `AndroidManifest.xml` file in your Anrdoid project and make the following changes.
 
@@ -55,7 +55,7 @@ ii. Add the `replace` merge rule for the `android:allowBackup` attribute in the 
 <application tools:replace="android:allowBackup">
 ```
 
-### 3. iOS Pre-requisites ###
+### 3. iOS Pre-requisites
 
 Open up the `Podfile` file in your iOS project and make the following changes.
 
@@ -65,13 +65,20 @@ platform :ios, '11.0'
 ```
 2. Add the PayHere React Native SDK podspec.
 ```ruby
+# Add this is if something similar doesn't already exit
 use_react_native!(:path => config["reactNativePath"])
 
 # Add this line just below 'use_react_native!'
 pod 'payhere-mobilesdk-reactnative', :path => '../node_modules/@payhere/payhere-mobilesdk-reactnative'
 ```
+3. Run the following command inside the 'ios' folder.
+```sh
+pod install
+```
 
-### 4. Whitelist Mobile App Package Name ###
+If you encounter linking errors related to "swiftWebKit", please refer to this [GitHub issue](https://github.com/PayHereLK/payhere-mobilesdk-reactnative/issues/9).
+
+### 4. Whitelist Mobile App Package Name
 
 a. Login to your PayHere Merchant Account and navigate to Settings  > Domains and Credentials.
 
@@ -91,7 +98,7 @@ f. Click 'Request to Approve'.
 
 ### 5. Initiate a Payment Request to PayHere Payment Gateway ### 
 
-##### a. One-time Payment Request #####
+##### a. One-time Payment Request
 
 Creates a one-time payment request charged only once. To capture the payment details from your server, [read our docs](https://support.payhere.lk/api-&-mobile-sdk/payhere-checkout#2-listening-to-payment-notification).
 
@@ -136,7 +143,7 @@ PayHere.startPayment(
 );
 ```
 
-##### b. Recurring Payment Request #####
+##### b. Recurring Payment Request
 
 Creates a subscription payment that is charged at a fixed frequency. To capture the payment details from your server, [read our docs](https://support.payhere.lk/api-&-mobile-sdk/payhere-recurring#2-listening-to-payment-notification).
 
@@ -186,7 +193,7 @@ PayHere.startPayment(
 );
 ```
 
-##### c. Preapproval Request #####
+##### c. Preapproval Request
 
 Tokenize customer card details for later usage with the [PayHere Charging API](https://support.payhere.lk/api-&-mobile-sdk/payhere-charging). To capture the payment details from your server, [read our docs](https://support.payhere.lk/api-&-mobile-sdk/payhere-preapproval#2-listening-to-payment-notification).
 
@@ -228,13 +235,13 @@ PayHere.startPayment(
 );
 ```
 
-## FAQ ##
+## FAQ
 
-#### What versions of React Native are supported? ####
+#### What versions of React Native are supported?
 
 React Native versions above `0.60.0` are supported.
 
-#### What versions of iOS are supported? ####
+#### What versions of iOS are supported?
 
 The iOS component for this SDK supports iOS Versions above 11.0.
 
@@ -242,7 +249,7 @@ The iOS component for this SDK supports iOS Versions above 11.0.
 
 The Android component for this SDK supports Android Versions above API Level 17.
 
-#### What are the parameters for the `PayHere.startPayment` method? ####
+#### What are the parameters for the `PayHere.startPayment` method?
 
 ```js
 PayHere.startPayment(
@@ -275,25 +282,19 @@ Each payment request type (one-time/recurring/pre-approval) sends a different pa
 - Recurring Payment Details: [read docs](https://support.payhere.lk/api-&-mobile-sdk/payhere-recurring#2-listening-to-payment-notification)
 - Preapproval Details: [read docs](https://support.payhere.lk/api-&-mobile-sdk/payhere-preapproval#2-listening-to-preapproval-notification)
 
-#### I am getting an error saying, "Could not GET 'https://dl.bintray.com..." ####
+#### I am getting an error saying, "Could not GET 'https://dl.bintray.com..."
 
 PayHere React Native SDK versions prior to `1.0.11` (`1.0.8` and previous versions) depended on an older version of the PayHere Android SDK which is no longer available through the bintray.com Maven repository. Update to the latest version `1.0.11` and try again.
 
 If you are still experiencing issues, make sure you have followed the new "2. Android Pre-requisites" section with updated instructions for SDK versions `1.0.11` and above.
 
-#### I have a different question. Where should I raise my issues? ####
+#### I am getting Linker errors when building for iOS
+
+This is a known issue that occurs due to the use of Swift files in the PayHere iOS SDK which is used internally by this SDK. Please refer to the following GitHub issue on the documented steps to resolve it.
+
+[GitHub Issue](https://github.com/PayHereLK/payhere-mobilesdk-reactnative/issues/9)
+
+#### I have a different question. Where should I raise my issues?
 
 1. You can raise issues directly at the [Issues section](https://github.com/PayHereLK/payhere-mobilesdk-reactnative/issues) for the SDK's GitHub page.
 2. You can contact a PayHere Developer for technical support by mailing your issue and relevant code/screenshots to [techsupport@payhere.lk](mailto:techsupport@payhere.lk)
-
-
-
-
-
-
-
-
-
-
-
-
