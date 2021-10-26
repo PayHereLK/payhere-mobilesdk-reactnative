@@ -10,7 +10,7 @@ Open your React Native project's `package.json` file and add the PayHere React N
 ```json
 {
   "dependencies": {
-    "@payhere/payhere-mobilesdk-reactnative": "1.2.2"
+    "@payhere/payhere-mobilesdk-reactnative": "2.0.0"
   }
 }
 ```
@@ -68,7 +68,8 @@ platform :ios, '11.0'
 # Add this is if something similar doesn't already exist
 use_react_native!(:path => config["reactNativePath"])
 
-# Add this line just below 'use_react_native!'
+# Add these TWO lines just below 'use_react_native!'
+pod 'payHereSDK', :git => 'https://github.com/PayHereDevs/payhere-mobilesdk-ios-rb.git'
 pod 'payhere-mobilesdk-reactnative', :path => '../node_modules/@payhere/payhere-mobilesdk-reactnative'
 ```
 3. Run the following command inside the 'ios' folder.
@@ -293,6 +294,12 @@ If you are still experiencing issues, make sure you have followed the new "2. An
 This is a known issue that occurs due to the use of Swift files in the PayHere iOS SDK which is used internally by this SDK. Please refer to the following GitHub issue on the documented steps to resolve it.
 
 [GitHub Issue](https://github.com/PayHereLK/payhere-mobilesdk-reactnative/issues/9)
+
+#### I am getting a 'Multiple commands produce...' error when building for iOS
+
+Please see this GitHub Issue for troubleshooting.
+
+[GitHub Issue](https://github.com/PayHereLK/payhere-mobilesdk-reactnative/issues/14)
 
 #### I have a different question. Where should I raise my issues?
 
