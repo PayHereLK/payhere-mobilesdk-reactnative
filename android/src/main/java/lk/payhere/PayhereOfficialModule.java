@@ -17,7 +17,9 @@ import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import lk.payhere.androidsdk.PHConfigs;
 import lk.payhere.androidsdk.PHConstants;
@@ -43,7 +45,6 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
     private static final class PaymentObjectKey{
         public final static String sandbox = "sandbox";
         public final static String merchantId = "merchant_id";
-        public final static String merchantSecret = "merchant_secret";
         public final static String notifyUrl = "notify_url";
         public final static String orderId = "order_id";
         public final static String items = "items";
@@ -65,6 +66,11 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
         public final static String duration = "duration";
         public final static String startupFee = "startup_fee";
         public final static String preapprove = "preapprove";
+        public final static String authorize = "authorize";
+        public final static String prefixItemNumber = "item_number_";
+        public final static String prefixItemName = "item_name_";
+        public final static String prefixItemAmount = "amount_";
+        public final static String prefixItemQuantity = "quantity_";
 
         public PaymentObjectKey(){}
     }
@@ -83,6 +89,46 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
         public final static String error = "error";
 
         private ResultCallbackType(){}
+    }
+
+    private static final class PayHereItemProcessingException extends Exception{
+        private String reason;
+
+        /**
+         * The key's size was not as expected
+         * @param key
+         * @param size measured size of the key
+         */
+        public PayHereItemProcessingException(String key, int size){
+            this.reason = String.format("Empty key encountered. Key string: '%s' Size: %d", key, size);
+        }
+
+        public PayHereItemProcessingException(){
+            this.reason = "Unknown Error Occurred while extracting Item data";
+        }
+
+        /**
+         * A key was present, but there was no number at the end of it.
+         * @param key
+         */
+        public PayHereItemProcessingException(String key){
+            this.reason = String.format("Could not find a number at the end of key, '%s'. Expected for example, 'some_key_1'.", key);
+        }
+
+        /**
+         * A key was present, but the character at the end could not be parsed to a number.
+         * @param key
+         * @param value handles null or scenarios.
+         */
+        public PayHereItemProcessingException(String key, Object value){
+            String valueContents = value == null ? "null" : value.toString();
+            this.reason = String.format("Could not parse value '%s' at the end of key '%s' to a number. Expected for example, 'some_key_1'.", valueContents, key);
+        }
+
+        public PayHereItemProcessingException setCustomReason(String reason){
+            this.reason = reason;
+            return this;
+        }
     }
 
     private static final class PayHereKeyExtractionException extends Exception{
@@ -177,6 +223,9 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
 
         if (payment.hasKey(PaymentObjectKey.preapprove) && payment.getBoolean(PaymentObjectKey.preapprove))
             errorString = this.createAndLaunchPreapprovalRequest(paymentObject, reactContext);
+        else if (paymentObject.containsKey(PaymentObjectKey.authorize) && (boolean) paymentObject.get(PaymentObjectKey.authorize)){
+            errorString = this.createAndLaunchAuthorizationRequest(paymentObject, reactContext);
+        }
         else{
             boolean recurrenceCheck = payment.hasKey(PaymentObjectKey.recurrence) && payment.getString(PaymentObjectKey.recurrence) != null;
             boolean durationCheck = payment.hasKey(PaymentObjectKey.duration) && payment.getString(PaymentObjectKey.duration) != null;
@@ -204,15 +253,31 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
 
                 if (resultCode == Activity.RESULT_OK) {
                     String msg;
-                    if (response != null)
-                        if (response.isSuccess()) {
-                            msg = "Activity result:" + response.getData().toString();
-                            String paymentNo = Long.toString(response.getData().getPaymentNo());
-                            this.sendCompleted(paymentNo);
-                        } else {
-                            msg = "Result:" + response.toString();
-                            this.sendError(response.getData().getMessage());
+                    if (response != null){
+                        msg = "Response: " + response.toString();
+                        if (response.getData() == null){
+                            if (response.isSuccess()){
+                                this.sendError("Internal Error. Could not map success response.");
+                            }
+                            else{
+                                this.handleAsError(response);
+                            }
                         }
+                        else{
+                            StatusResponse status = response.getData();
+                            if (status.getStatus() == StatusResponse.Status.SUCCESS.value() ||
+                                    status.getStatus() == StatusResponse.Status.HOLD.value()){
+
+                                msg = "Activity result:" + response.getData().toString();
+                                String paymentNo = Long.toString(response.getData().getPaymentNo());
+                                this.sendCompleted(paymentNo);
+
+                            }
+                            else{
+                                this.handleAsError(response);
+                            }
+                        }
+                    }
                     else {
                         msg = "Result: no response";
                         this.log(msg);
@@ -256,6 +321,20 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
             }
             else if (data == null){
                 this.sendDismissed();
+            }
+        }
+    }
+
+    private void handleAsError(PHResponse<StatusResponse> response){
+        if (response.getData() == null){
+            this.sendError("Unknown Error Occurred. PayHere Response was null.");
+        }
+        else{
+            if (response.getData().getMessage() == null){
+                this.sendError("Unknown Error Occurred.");
+            }
+            else{
+                this.sendError(response.getData().getMessage());
             }
         }
     }
@@ -346,6 +425,34 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
             else{
                 try {
                     return raw.toString();
+                }
+                catch(Exception e){
+                    throw new PayHereKeyExtractionException(key, true);
+                }
+            }
+        }
+        else{
+            throw new PayHereKeyExtractionException(key, false);
+        }
+    }
+
+    /**
+     * Extracts an int Key from a HashMap.
+     * @param map Map to extract keys from
+     * @param key Key of value to extract
+     * @return int value of extracted key. If an error occurred, an exception will be thrown.
+     * @throws PayHereKeyExtractionException Key extraction error information
+     */
+    private int extractInteger(HashMap<String, Object> map, String key) throws PayHereKeyExtractionException{
+        if (map.containsKey(key)){
+            Object raw = map.get(key);
+            if (raw == null){
+                throw new PayHereKeyExtractionException(key, "Object", true);
+            }
+            else{
+                try {
+                    String tmpStr = this.extract(map, key);
+                    return Integer.parseInt(tmpStr);
                 }
                 catch(Exception e){
                     throw new PayHereKeyExtractionException(key, true);
@@ -468,22 +575,93 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
         }
     }
 
+    private ArrayList<Item> extractItems(HashMap<String, Object> map) throws PayHereItemProcessingException, PayHereKeyExtractionException{
+        HashMap<Integer, Item> itemMap = new HashMap<>();
+
+        for(Map.Entry<String, Object> entry: map.entrySet()){
+            try{
+                String key = entry.getKey();
+                if (key == null || key.isEmpty()){
+                    continue;
+                }
+
+                if (key.startsWith(PaymentObjectKey.prefixItemNumber)){
+                    int index = getIndex(key);
+                    Item item = initOrGetItem(index, itemMap);
+                    item.setId(this.extract(map, key));
+                }
+                else if (key.startsWith(PaymentObjectKey.prefixItemName)){
+                    int index = getIndex(key);
+                    Item item = initOrGetItem(index, itemMap);
+                    item.setName(this.extract(map, key));
+                }
+                else if (key.startsWith(PaymentObjectKey.prefixItemQuantity)){
+                    int index = getIndex(key);
+                    Item item = initOrGetItem(index, itemMap);
+                    item.setQuantity(this.extractInteger(map, key));
+                }
+                else if (key.startsWith(PaymentObjectKey.prefixItemAmount)){
+                    int index = getIndex(key);
+                    Item item = initOrGetItem(index, itemMap);
+                    item.setAmount(this.extractAmount(map, key));
+                }
+            }
+            catch(PayHereKeyExtractionException exc){
+                throw exc;
+            }
+            catch(PayHereItemProcessingException exc){
+                throw exc;
+            }
+        }
+
+        return new ArrayList<Item>(itemMap.values());
+    }
+
+    private int getIndex(String key) throws PayHereItemProcessingException{
+        if (key == null){
+            return -1;
+        }
+
+        // Keys will have atleast one '_' due to logic in this.extractItems.
+        // So: components.length >= 1
+        String[] components = key.split("_");
+        String last = components[components.length - 1];
+
+        try {
+            int index = Integer.parseInt(last);
+            return index;
+        }
+        catch(NumberFormatException exc){
+            throw new PayHereItemProcessingException(key, last);
+        }
+    }
+
+    /**
+     * Looks for the item with index in the map. If found returns it.
+     * Otherwise, creates one AND PUTS IT IN THE MAP then returns it.
+     */
+    private Item initOrGetItem(int index, HashMap<Integer, Item> map){
+        Item item = map.get(index);
+        if (item == null){
+            item = new Item();
+            map.put(index, item);
+            return item;
+        }
+        else{
+            return item;
+        }
+    }
+
     private String createAndLaunchOnetimeRequest(HashMap<String, Object> o, ReactApplicationContext reactContext){
         String error = null;
 
         try {
 
-            Item item = new Item(
-                null,
-                this.extract(o, PaymentObjectKey.items),
-                1,
-                this.extractAmount(o, PaymentObjectKey.amount)
-            );
+            ArrayList<Item> items = this.extractItems(o);
 
             InitRequest req = new InitRequest();
 
             req.setMerchantId(          this.extract(o,         PaymentObjectKey.merchantId));
-            req.setMerchantSecret(      this.extract(o,         PaymentObjectKey.merchantSecret));
             req.setNotifyUrl(           this.extract(o,         PaymentObjectKey.notifyUrl));
             req.setCurrency(            this.extract(o,         PaymentObjectKey.currency));
             req.setAmount(              this.extractAmount(o,   PaymentObjectKey.amount));
@@ -526,7 +704,7 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
             if (deliveryCountry != null)
                 customerDeliveryAddress.setCountry(deliveryCountry);
 
-            req.getItems().add(item);
+            req.getItems().addAll(items);
 
             Boolean isSandbox = this.extractBoolean(o,          PaymentObjectKey.sandbox);
             this.launchRequest(req, reactContext, isSandbox);
@@ -535,22 +713,22 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
         catch(PayHereKeyExtractionException exc){
             error = exc.toString();
         }
+        catch(PayHereItemProcessingException exc){
+            error = exc.reason;
+        }
 
         return error;
     }
 
-    /**
-     * @warning: UNTESTED, development happened during PayHere System Upgrade.
-     */
     private String createAndLaunchRecurringRequest(HashMap<String, Object> o, ReactApplicationContext reactContext){
         String error = null;
 
         try {
 
+            ArrayList<Item> items = this.extractItems(o);
             InitRequest req = new InitRequest();
 
             req.setMerchantId(          this.extract(o,         PaymentObjectKey.merchantId));
-            req.setMerchantSecret(      this.extract(o,         PaymentObjectKey.merchantSecret));
             req.setNotifyUrl(           this.extract(o,         PaymentObjectKey.notifyUrl));
             req.setCurrency(            this.extract(o,         PaymentObjectKey.currency));
             req.setAmount(              this.extractAmount(o,   PaymentObjectKey.amount));
@@ -600,6 +778,8 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
             if (deliveryCountry != null)
                 customerDeliveryAddress.setCountry(deliveryCountry);
 
+            req.getItems().addAll(items);
+
             Boolean isSandbox = this.extractBoolean(o,          PaymentObjectKey.sandbox);
             this.launchRequest(req, reactContext, isSandbox);
 
@@ -607,22 +787,22 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
         catch(PayHereKeyExtractionException exc){
             error = exc.toString();
         }
+        catch(PayHereItemProcessingException exc){
+            error = exc.reason;
+        }
 
         return error;
     }
 
-    /**
-     * @warning: UNTESTED, development happened during PayHere System Upgrade.
-     */
     private String createAndLaunchPreapprovalRequest(HashMap<String, Object> o, ReactApplicationContext reactContext){
         String error = null;
 
         try {
 
+            ArrayList<Item> items = this.extractItems(o);
             InitPreapprovalRequest req = new InitPreapprovalRequest();
 
             req.setMerchantId(          this.extract(o,         PaymentObjectKey.merchantId));
-            req.setMerchantSecret(      this.extract(o,         PaymentObjectKey.merchantSecret));
             req.setNotifyUrl(           this.extract(o,         PaymentObjectKey.notifyUrl));
             req.setCurrency(            this.extract(o,         PaymentObjectKey.currency));
             req.setOrderId(             this.extract(o,         PaymentObjectKey.orderId));
@@ -664,12 +844,85 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
             if (deliveryCountry != null)
                 customerDeliveryAddress.setCountry(deliveryCountry);
 
+            req.getItems().addAll(items);
+
             Boolean isSandbox = this.extractBoolean(o,          PaymentObjectKey.sandbox);
             this.launchRequest(req, reactContext, isSandbox);
 
         }
         catch(PayHereKeyExtractionException exc){
             error = exc.toString();
+        }
+        catch(PayHereItemProcessingException exc){
+            error = exc.reason;
+        }
+
+        return error;
+    }
+
+    private String createAndLaunchAuthorizationRequest(HashMap<String, Object> o, ReactApplicationContext reactContext){
+        String error = null;
+
+        try {
+
+            ArrayList<Item> items = this.extractItems(o);
+            InitRequest req = new InitRequest();
+
+            req.setMerchantId(          this.extract(o,         PaymentObjectKey.merchantId));
+            req.setNotifyUrl(           this.extract(o,         PaymentObjectKey.notifyUrl));
+            req.setCurrency(            this.extract(o,         PaymentObjectKey.currency));
+            req.setAmount(              this.extractAmount(o,   PaymentObjectKey.amount));
+            req.setOrderId(             this.extract(o,         PaymentObjectKey.orderId));
+            req.setItemsDescription(    this.extract(o,         PaymentObjectKey.items));
+
+            String custom1 =            this.extractOptional(o, PaymentObjectKey.customOne);
+            String custom2 =            this.extractOptional(o, PaymentObjectKey.customTwo);
+
+            if (custom1 != null) {
+                req.setCustom1(custom1);
+            }
+
+            if (custom2 != null) {
+                req.setCustom2(custom2);
+            }
+
+            Customer customer = req.getCustomer();
+            customer.setFirstName(      this.extract(o,         PaymentObjectKey.firstName));
+            customer.setLastName(       this.extract(o,         PaymentObjectKey.lastName));
+            customer.setEmail(          this.extract(o,         PaymentObjectKey.email));
+            customer.setPhone(          this.extract(o,         PaymentObjectKey.phone));
+
+            Address customerAddress = customer.getAddress();
+            customerAddress.setAddress( this.extract(o,         PaymentObjectKey.address));
+            customerAddress.setCity(    this.extract(o,         PaymentObjectKey.city));
+            customerAddress.setCountry( this.extract(o,         PaymentObjectKey.country));
+
+            Address customerDeliveryAddress = customer.getDeliveryAddress();
+            String deliveryAddress =    this.extractOptional(o, PaymentObjectKey.deliveryAddress);
+            String deliveryCity =       this.extractOptional(o, PaymentObjectKey.deliveryCity);
+            String deliveryCountry =    this.extractOptional(o, PaymentObjectKey.deliveryCountry);
+
+            if (deliveryAddress != null)
+                customerDeliveryAddress.setAddress(deliveryAddress);
+
+            if (deliveryCity != null)
+                customerDeliveryAddress.setCity(deliveryCity);
+
+            if (deliveryCountry != null)
+                customerDeliveryAddress.setCountry(deliveryCountry);
+
+            req.getItems().addAll(items);
+            req.setHoldOnCardEnabled(true);
+
+            Boolean isSandbox = this.extractBoolean(o,          PaymentObjectKey.sandbox);
+            this.launchRequest(req, reactContext, isSandbox);
+
+        }
+        catch(PayHereKeyExtractionException exc){
+            error = exc.toString();
+        }
+        catch(PayHereItemProcessingException exc){
+            error = exc.reason;
         }
 
         return error;
