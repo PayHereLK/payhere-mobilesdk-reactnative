@@ -89,7 +89,7 @@ c. Select 'App' from the first dropdown.
 
 d. Add your React Native App package name (e.g. lk.bhasha.helakuru).
 
-e. Take note of the hash value in the last field. This is your Merchant Secret for this specific mobile App. You will need this in Step 5.
+e. Take note of the hash value in the last field. This is your Merchant Secret for this specific mobile App.
 
 f. Click 'Request to Approve'. 
 
@@ -110,7 +110,6 @@ import PayHere from '@payhere/payhere-mobilesdk-reactnative';
 const paymentObject = {
     "sandbox": true,                 // true if using Sandbox Merchant ID
     "merchant_id": "1211149",        // Replace your Merchant ID
-    "merchant_secret": "xyz",        // See step 4e
     "notify_url": "http://sample.com/notify",
     "order_id": "ItemNo12345",
     "items": "Hello from React Native!",
@@ -157,7 +156,6 @@ import PayHere from '@payhere/payhere-mobilesdk-reactnative';
 const paymentObject = {
     "sandbox": true,                 // true if using Sandbox Merchant ID
     "merchant_id": "1211149",        // Replace your Merchant ID
-    "merchant_secret": "xyz",        // See step 4e
     "notify_url": "http://sample.com/notify",
     "order_id": "ItemNo12345",
     "items": "Hello from React Native!",
@@ -208,7 +206,6 @@ const paymentObject = {
     "sandbox": true,                 // true if using Sandbox Merchant ID
     "preapprove": true,              // Required
     "merchant_id": "1211149",        // Replace your Merchant ID
-    "merchant_secret": "xyz",        // See step 4e
     "notify_url": "http://sample.com/notify",
     "order_id": "ItemNo12345",
     "items": "Hello from React Native!",
@@ -220,6 +217,112 @@ const paymentObject = {
     "address": "No.1, Galle Road",
     "city": "Colombo",
     "country": "Sri Lanka",
+};
+
+PayHere.startPayment(
+    paymentObject, 
+    (paymentId) => {
+        console.log("Payment Completed", paymentId);
+    },
+    (errorData) => {
+        Alert.alert("PayHere Error", errorData);
+    },
+    () => {
+        console.log("Payment Dismissed");
+    }
+);
+```
+
+##### d. Hold-on-Card Request
+
+Authorize (hold) charges on a customer's card for later use with the [PayHere Capture API](https://support.payhere.lk/api-&-mobile-sdk/payhere-capture). To capture the payment hold details from your server, [read out docs](https://support.payhere.lk/api-&-mobile-sdk/payhere-authorize#2-listening-to-authorization-notification).
+
+Read more about Hold-on-card [in our docs](https://support.payhere.lk/faq/hold-on-card).  
+
+```js
+import { Alert } from 'react-native';
+import PayHere from '@payhere/payhere-mobilesdk-reactnative';
+
+const paymentObject = {
+    "sandbox": true,                // true if using Sandbox Merchant ID
+    "authorize": true,              // Required
+    "merchant_id": "1211149",       // Replace your Merchant ID
+    "notify_url": "https://ent13zfovoz7d.x.pipedream.net/",
+    "order_id": "ItemNo12345",
+    "items": "Hello from React Native!",
+    "currency": "LKR",
+    "amount": "50.00",
+    "first_name": "Saman",
+    "last_name": "Perera",
+    "email": "samanp@gmail.com",
+    "phone": "0771234567",
+    "address": "No.1, Galle Road",
+    "city": "Colombo",
+    "country": "Sri Lanka",
+};
+
+PayHere.startPayment(
+    paymentObject, 
+    (paymentId) => {
+        console.log("Payment Authorized!");
+    },
+    (errorData) => {
+        Alert.alert("PayHere Error", errorData);
+    },
+    () => {
+        console.log("Payment Dismissed");
+    }
+);
+```
+
+### 6. Optionally, pass Item-wise Details
+
+Starting with version `3.0.0` you can optionally pass the details of the line items in the order. These details will appear in the customer's invoice. Item-wise Details are supported in Onetime, Subscription and Authorization payment modes. It is not supported in Pre-approval payments.
+
+Each item has four parameters. Their parameter names must be followed by the index of that item. For example:
+```json
+  "item_number_1": "ITM001",
+  "item_name_1": "PayHere Sticker",
+  "quantity_1": "2",
+  "amount_1": "25.0",
+```
+
+An example Onetime payment request with 2 items is shown below. If you have specific questions, please raise them in the [Issues section](https://github.com/PayHereLK/payhere-mobilesdk-reactnative/issues).
+
+```js
+import { Alert } from 'react-native';
+import PayHere from '@payhere/payhere-mobilesdk-reactnative';
+
+const paymentObject = {
+    "sandbox": true,                 // true if using Sandbox Merchant ID
+    "merchant_id": "1211149",        // Replace your Merchant ID
+    "notify_url": "http://sample.com/notify",
+    "order_id": "ItemNo12345",
+    "items": "Hello from React Native!",
+
+    "item_number_1": "001",          // ** Item 1 **
+    "item_name_1": "Test Item #1",
+    "amount_1": "15.00",
+    "quantity_1": "2",
+    "item_number_2": "002",          // ** Item 2 **
+    "item_name_2": "Test Item #2",
+    "amount_2": "20.00",
+    "quantity_2": "1",
+    
+    "amount": 50.00,
+    "currency": "LKR",
+    "first_name": "Saman",
+    "last_name": "Perera",
+    "email": "samanp@gmail.com",
+    "phone": "0771234567",
+    "address": "No.1, Galle Road",
+    "city": "Colombo",
+    "country": "Sri Lanka",
+    "delivery_address": "No. 46, Galle road, Kalutara South",
+    "delivery_city": "Kalutara",
+    "delivery_country": "Sri Lanka",
+    "custom_1": "",
+    "custom_2": ""
 };
 
 PayHere.startPayment(
@@ -282,6 +385,7 @@ Each payment request type (one-time/recurring/pre-approval) sends a different pa
 - One-time Payment Details: [read docs](https://support.payhere.lk/api-&-mobile-sdk/payhere-checkout#2-listening-to-payment-notification)
 - Recurring Payment Details: [read docs](https://support.payhere.lk/api-&-mobile-sdk/payhere-recurring#2-listening-to-payment-notification)
 - Preapproval Details: [read docs](https://support.payhere.lk/api-&-mobile-sdk/payhere-preapproval#2-listening-to-preapproval-notification)
+- Authorization (Hold) Details: [read docs](https://support.payhere.lk/api-&-mobile-sdk/payhere-authorize#2-listening-to-authorization-notification)
 
 #### I am getting an error saying, "Could not GET 'https://dl.bintray.com..."
 
@@ -300,6 +404,16 @@ This is a known issue that occurs due to the use of Swift files in the PayHere i
 Please see this GitHub Issue for troubleshooting.
 
 [GitHub Issue](https://github.com/PayHereLK/payhere-mobilesdk-reactnative/issues/14)
+
+#### Can I pass details about each item in the Order?
+
+Yes! Starting from version `3.0.0`, the PayHere React Native SDK supports Item-wise Parameters. Please read [Section 6](https://github.com/PayHereLK/payhere-mobilesdk-reactnative#6-optionally-pass-item-wise-details) above.
+
+#### Does this SDK support Payment Authorization (Hold on Card) and Capture?
+
+Yes and No. Starting from version `3.0.0` this SDK supports Authorization (also known as Hold on Card) requests. Authorizations generate an `authorization_token` which is sent as a POST request to your `notify_url`. 
+
+From there you must use the [PayHere Capture API](https://support.payhere.lk/api-&-mobile-sdk/payhere-capture) to use the genereated token and perform the capture. You can read more about the PayHere Hold on Card Feature by [reading our docs](https://support.payhere.lk/faq/hold-on-card).
 
 #### I have a different question. Where should I raise my issues?
 
