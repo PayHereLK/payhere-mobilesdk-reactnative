@@ -291,10 +291,15 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
                                 break;
 
                             case PHResponse.STATUS_ERROR_PAYMENT:
-                                if (response.getData().getMessage() == null)
-                                    this.sendDismissed();
-                                else
-                                    this.sendError(response.getData().getMessage());
+                                if (response.getData() != null){
+                                    if (response.getData().getMessage() == null)
+                                        this.sendError("Payment error occurred with Code 2");
+                                    else
+                                        this.sendError(response.getData().getMessage());
+                                }
+                                else{
+                                    this.sendError("Payment error occurred with Code 1");  
+                                }
                                 break;
 
                             case PHResponse.STATUS_ERROR_NETWORK:
@@ -311,7 +316,15 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
 
                             case PHResponse.STATUS_ERROR_UNKNOWN:
                             default:
-                                this.sendError("Unknown error occurred");
+                                if (response.getData() != null){
+                                    if (response.getData().getMessage() == null)
+                                        this.sendError("Unknown error occurred with Code 2");
+                                    else
+                                        this.sendError(response.getData().getMessage());
+                                }
+                                else{
+                                    this.sendError("Unknown error occurred with Code 1");  
+                                }
                                 break;
                         }
                     }
