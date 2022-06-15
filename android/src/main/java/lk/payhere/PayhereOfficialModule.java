@@ -20,6 +20,9 @@ import com.facebook.react.bridge.WritableMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import lk.payhere.androidsdk.PHConfigs;
 import lk.payhere.androidsdk.PHConstants;
@@ -290,18 +293,6 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
                                 this.sendDismissed();
                                 break;
 
-                            case PHResponse.STATUS_ERROR_PAYMENT:
-                                if (response.getData() != null){
-                                    if (response.getData().getMessage() == null)
-                                        this.sendError("Payment error occurred with Code 2");
-                                    else
-                                        this.sendError(response.getData().getMessage());
-                                }
-                                else{
-                                    this.sendError("Payment error occurred with Code 1");  
-                                }
-                                break;
-
                             case PHResponse.STATUS_ERROR_NETWORK:
                                 this.sendError("Network Error");
                                 break;
@@ -315,16 +306,9 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
                                 break;
 
                             case PHResponse.STATUS_ERROR_UNKNOWN:
+                            case PHResponse.STATUS_ERROR_PAYMENT:
                             default:
-                                if (response.getData() != null){
-                                    if (response.getData().getMessage() == null)
-                                        this.sendError("Unknown error occurred with Code 2");
-                                    else
-                                        this.sendError(response.getData().getMessage());
-                                }
-                                else{
-                                    this.sendError("Unknown error occurred with Code 1");  
-                                }
+                                this.handleAsError(response);
                                 break;
                         }
                     }
@@ -339,6 +323,30 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
     }
 
     private void handleAsError(PHResponse<StatusResponse> response){
+        if (response == null){
+            this.sendError("Unknown Error Occurred, response was null");
+            return;
+        }
+
+        String resStr = response.toString();
+        String errMsg = null;
+        try{
+            Pattern pattern = Pattern.compile("message='(.+?)',");
+            Matcher m = pattern.matcher(resStr);
+            if (m.find() && m.groupCount() >= 1){
+                errMsg = m.group(1);
+            }
+        }
+        catch(Exception e){
+            this.sendError("Unknown error occurred while extracting error message");
+            return;
+        }
+
+        if(errMsg != null){
+            this.sendError(errMsg);
+            return;
+        }
+
         if (response.getData() == null){
             this.sendError("Unknown Error Occurred. PayHere Response was null.");
         }
