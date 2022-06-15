@@ -10,7 +10,7 @@ Open your React Native project's `package.json` file and add the PayHere React N
 ```json
 {
   "dependencies": {
-    "@payhere/payhere-mobilesdk-reactnative": "4.0.1"
+    "@payhere/payhere-mobilesdk-reactnative": "4.0.2"
   }
 }
 ```
