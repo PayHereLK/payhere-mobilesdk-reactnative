@@ -80,10 +80,10 @@ PODS:
   - libevent (2.1.12)
   - ObjectMapper (3.5.3)
   - OpenSSL-Universal (1.1.1100)
-  - payhere-mobilesdk-reactnative (3.0.0):
-    - payHereSDK (= 3.0.4)
+  - payhere-mobilesdk-reactnative (4.0.4):
+    - payHereSDK (= 3.0.5)
     - React
-  - payHereSDK (3.0.4):
+  - payHereSDK (3.0.5):
     - Alamofire (~> 5.0.0-rc.2)
     - AlamofireObjectMapper
     - SDWebImage
@@ -396,7 +396,7 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - OpenSSL-Universal (= 1.1.1100)
   - "payhere-mobilesdk-reactnative (from `../node_modules/@payhere/payhere-mobilesdk-reactnative`)"
-  - payHereSDK (from `https://github.com/PayHereDevs/payhere-mobilesdk-ios-rb.git`, branch `dev-3.0.4`)
+  - payHereSDK (from `https://github.com/PayHereDevs/payhere-mobilesdk-ios-rb.git`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -463,7 +463,6 @@ EXTERNAL SOURCES:
   payhere-mobilesdk-reactnative:
     :path: "../node_modules/@payhere/payhere-mobilesdk-reactnative"
   payHereSDK:
-    :branch: dev-3.0.4
     :git: https://github.com/PayHereDevs/payhere-mobilesdk-ios-rb.git
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
@@ -520,7 +519,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   payHereSDK:
-    :commit: 0eca762433646f9f30cd4527b5ae180d1ad5501e
+    :commit: 70579609e9b776f206ee84d6bbd8101ad879b0bc
     :git: https://github.com/PayHereDevs/payhere-mobilesdk-ios-rb.git
 
 SPEC CHECKSUMS:
@@ -528,7 +527,7 @@ SPEC CHECKSUMS:
   AlamofireObjectMapper: 74d1440c92c42bbcc2b5f4dc81654ac095ec669f
   boost: a7c83b31436843459a1961bfd74b96033dc77234
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
+  DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: a7a655862f6b09625d11c772296b01cd5164b648
   FBReactNativeSpec: 81ce99032d5b586fddd6a38d450f8595f7e04be4
   Flipper: 26fc4b7382499f1281eb8cb921e5c3ad6de91fe0
@@ -541,13 +540,13 @@ SPEC CHECKSUMS:
   Flipper-RSocket: d9d9ade67cbecf6ac10730304bf5607266dd2541
   FlipperKit: cbdee19bdd4e7f05472a66ce290f1b729ba3cb86
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: 476ee3e89abb49e07f822b48323c51c57124b572
+  glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   ObjectMapper: 97111c97e054a6ee25917662106689f0b4127b37
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
-  payhere-mobilesdk-reactnative: 56ff3ae64b94046dddb247f08d5a3c4f51b52d8b
-  payHereSDK: 6ed3b2b507ebe3c930ba7777af0b3277dd23b477
-  RCT-Folly: 4d8508a426467c48885f1151029bc15fa5d7b3b8
+  payhere-mobilesdk-reactnative: 108bf6645c22787bbe0b07ff94356ecefddb3ef9
+  payHereSDK: 546abe1bab56be8474a53c06ac9f28be5ec0032f
+  RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
   RCTRequired: 3e917ea5377751094f38145fdece525aa90545a0
   RCTTypeSafety: c43c072a4bd60feb49a9570b0517892b4305c45e
   React: 176dd882de001854ced260fad41bb68a31aa4bd0
@@ -577,6 +576,6 @@ SPEC CHECKSUMS:
   Yoga: 99652481fcd320aefa4a7ef90095b95acd181952
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 179d365e9cf9146d7a43b2abe73473d3a2b898d6
+PODFILE CHECKSUM: 144228f0aacb850b204d0fbe54f89f47d9516d37
 
 COCOAPODS: 1.11.3
