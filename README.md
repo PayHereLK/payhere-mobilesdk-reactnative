@@ -10,7 +10,7 @@ Open your React Native project's `package.json` file and add the PayHere React N
 ```json
 {
   "dependencies": {
-    "@payhere/payhere-mobilesdk-reactnative": "4.0.7"
+    "@payhere/payhere-mobilesdk-reactnative": "4.0.8"
   }
 }
 ```
@@ -206,6 +206,7 @@ const paymentObject = {
     "sandbox": true,                 // true if using Sandbox Merchant ID
     "preapprove": true,              // Required
     "merchant_id": "1211149",        // Replace your Merchant ID
+    "amount": "50.00",
     "notify_url": "http://sample.com/notify",
     "order_id": "ItemNo12345",
     "items": "Hello from React Native!",

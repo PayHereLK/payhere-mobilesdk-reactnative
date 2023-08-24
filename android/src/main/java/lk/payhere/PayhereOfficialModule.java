@@ -828,6 +828,7 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
             req.setCurrency(            this.extract(o,         PaymentObjectKey.currency));
             req.setOrderId(             this.extract(o,         PaymentObjectKey.orderId));
             req.setItemsDescription(    this.extract(o,         PaymentObjectKey.items));
+            req.setAmount(              this.extractAmount(o,   PaymentObjectKey.amount));    
 
             String custom1 =            this.extractOptional(o, PaymentObjectKey.customOne);
             String custom2 =            this.extractOptional(o, PaymentObjectKey.customTwo);
