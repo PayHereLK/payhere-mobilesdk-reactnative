@@ -482,7 +482,8 @@ import UIKit
             itemsMap:           itemsArr,
             currency:           parseCurrency(o[k.currency]),
             custom1:            parse(o[k.customOne]),
-            custom2:            parse(o[k.customTwo])
+            custom2:            parse(o[k.customTwo]),
+            amount:             parseAmount(o[k.amount]),
         )
         
         return request
