@@ -10,7 +10,7 @@ Open your React Native project's `package.json` file and add the PayHere React N
 ```json
 {
   "dependencies": {
-    "@payhere/payhere-mobilesdk-reactnative": "4.0.9"
+    "@payhere/payhere-mobilesdk-reactnative": "4.0.10"
   }
 }
 ```
@@ -218,6 +218,7 @@ const paymentObject = {
     "address": "No.1, Galle Road",
     "city": "Colombo",
     "country": "Sri Lanka",
+    "amount": "50.00"
 };
 
 PayHere.startPayment(

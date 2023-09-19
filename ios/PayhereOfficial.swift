@@ -483,7 +483,7 @@ import UIKit
             currency:           parseCurrency(o[k.currency]),
             custom1:            parse(o[k.customOne]),
             custom2:            parse(o[k.customTwo]),
-            amount:             parseAmount(o[k.amount]),
+            amount:             parseAmount(o[k.amount]) ?? 0.0
         )
         
         return request
@@ -519,6 +519,7 @@ import UIKit
             custom2:            parse(o[k.customTwo]),
             isHoldOnCardEnabled: true
         )
+        
         
         return request
     }
