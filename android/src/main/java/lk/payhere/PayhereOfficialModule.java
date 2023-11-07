@@ -516,17 +516,29 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
      * Extracts an PayHere Amount from HashMap.
      * @param map Map to extract keys from
      * @param key Key of value to extract
+     * @param skip bool value for skip amount key (preapproval)
      * @return Double value of extracted key. Null is never returned: exception thrown instead.
      * @throws PayHereKeyExtractionException Key extraction error information
      */
-    private Double extractAmount(HashMap<String, Object> map, String key) throws PayHereKeyExtractionException{
+    private Double extractAmount(HashMap<String, Object> map, String key,boolean skip) throws PayHereKeyExtractionException{
         if (map.containsKey(key)){
             Object raw = map.get(key);
-            if (raw == null){
+            if ( !skip && raw == null){
                 throw new PayHereKeyExtractionException(key, "Object", true);
             }
             else{
                 try {
+                 
+                    //ignore moount key if slip is true
+                    if(skip){
+                        if(raw == null)
+                        return  Double.valueOf("0");
+                        String str = raw.toString().trim();
+                    if( str.equals("")){
+                        return Double.valueOf("0");
+                     }
+                    }
+
                     String str = raw.toString();
                     return Double.valueOf(str);
                 }
@@ -536,9 +548,14 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
             }
         }
         else{
+
+            if(skip)
+                return Double.valueOf("0");
+
             throw new PayHereKeyExtractionException(key, false);
         }
     }
+
 
     /**
      * Extracts an PayHere Amount from HashMap.
@@ -624,7 +641,7 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
                 else if (key.startsWith(PaymentObjectKey.prefixItemAmount)){
                     int index = getIndex(key);
                     Item item = initOrGetItem(index, itemMap);
-                    item.setAmount(this.extractAmount(map, key));
+                    item.setAmount(this.extractAmount(map, key,false));
                 }
             }
             catch(PayHereKeyExtractionException exc){
@@ -685,7 +702,7 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
             req.setMerchantId(          this.extract(o,         PaymentObjectKey.merchantId));
             req.setNotifyUrl(           this.extract(o,         PaymentObjectKey.notifyUrl));
             req.setCurrency(            this.extract(o,         PaymentObjectKey.currency));
-            req.setAmount(              this.extractAmount(o,   PaymentObjectKey.amount));
+            req.setAmount(              this.extractAmount(o,   PaymentObjectKey.amount,false));
             req.setOrderId(             this.extract(o,         PaymentObjectKey.orderId));
             req.setItemsDescription(    this.extract(o,         PaymentObjectKey.items));
 
@@ -752,7 +769,7 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
             req.setMerchantId(          this.extract(o,         PaymentObjectKey.merchantId));
             req.setNotifyUrl(           this.extract(o,         PaymentObjectKey.notifyUrl));
             req.setCurrency(            this.extract(o,         PaymentObjectKey.currency));
-            req.setAmount(              this.extractAmount(o,   PaymentObjectKey.amount));
+            req.setAmount(              this.extractAmount(o,   PaymentObjectKey.amount,false));
             req.setRecurrence(          this.extract(o,         PaymentObjectKey.recurrence));
             req.setDuration(            this.extract(o,         PaymentObjectKey.duration));
             req.setOrderId(             this.extract(o,         PaymentObjectKey.orderId));
@@ -828,7 +845,7 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
             req.setCurrency(            this.extract(o,         PaymentObjectKey.currency));
             req.setOrderId(             this.extract(o,         PaymentObjectKey.orderId));
             req.setItemsDescription(    this.extract(o,         PaymentObjectKey.items));
-            req.setAmount(              this.extractAmount(o,   PaymentObjectKey.amount));    
+            req.setAmount(              this.extractAmount(o,   PaymentObjectKey.amount,true));    
 
             String custom1 =            this.extractOptional(o, PaymentObjectKey.customOne);
             String custom2 =            this.extractOptional(o, PaymentObjectKey.customTwo);
@@ -893,7 +910,7 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
             req.setMerchantId(          this.extract(o,         PaymentObjectKey.merchantId));
             req.setNotifyUrl(           this.extract(o,         PaymentObjectKey.notifyUrl));
             req.setCurrency(            this.extract(o,         PaymentObjectKey.currency));
-            req.setAmount(              this.extractAmount(o,   PaymentObjectKey.amount));
+            req.setAmount(              this.extractAmount(o,   PaymentObjectKey.amount,false));
             req.setOrderId(             this.extract(o,         PaymentObjectKey.orderId));
             req.setItemsDescription(    this.extract(o,         PaymentObjectKey.items));
 
