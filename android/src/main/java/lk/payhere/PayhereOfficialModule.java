@@ -532,7 +532,7 @@ public class PayhereOfficialModule extends ReactContextBaseJavaModule implements
                     //ignore moount key if slip is true
                     if(skip){
                         if(raw == null)
-                        return  Double.valueOf("0");
+                         return  Double.valueOf("0");
                         String str = raw.toString().trim();
                     if( str.equals("")){
                         return Double.valueOf("0");
