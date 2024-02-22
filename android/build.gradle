@@ -33,7 +33,7 @@ buildscript {
             jcenter()
             maven {
                 // PayHere Android
-                url  'https://repo.repsy.io/mvn/payhere/payhere-mobilesdk-android/'
+                url 'https://jitpack.io'
             }
         }
         dependencies {
@@ -72,7 +72,7 @@ repositories {
     }
     maven {
         // PayHere Android (doesn't seem to work?)
-        url  'https://repo.repsy.io/mvn/payhere/payhere-mobilesdk-android/'
+        url 'https://jitpack.io'
     }
     google()
     jcenter()
@@ -81,7 +81,7 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'lk.payhere:androidsdk:3.0.12'
+    implementation 'com.github.PayHereDevs:payhere-android-sdk:v3.0.14'
     implementation 'com.google.code.gson:gson:2.8.0'
 }
 
@@ -113,38 +113,69 @@ def configureReactNativePom(def pom) {
     }
 }
 
+// afterEvaluate { project ->
+//     // some Gradle build hooks ref:
+//     // https://www.oreilly.com/library/view/gradle-beyond-the/9781449373801/ch03.html
+//     task androidJavadoc(type: Javadoc) {
+//         source = android.sourceSets.main.java.srcDirs
+//         classpath += files(android.bootClasspath)
+//         // classpath += files(project.getConfigurations().getByName('compile').asList())
+//         include '**/*.java'
+//     }
+
+//     task androidJavadocJar(type: Jar, dependsOn: androidJavadoc) {
+//         classifier = 'javadoc'
+//         from androidJavadoc.destinationDir
+//     }
+
+//     task androidSourcesJar(type: Jar) {
+//         classifier = 'sources'
+//         from android.sourceSets.main.java.srcDirs
+//         include '**/*.java'
+//     }
+
+//     android.libraryVariants.all { variant ->
+//         def name = variant.name.capitalize()
+//         def javaCompileTask = variant.javaCompileProvider.get()
+
+//         task "jar${name}"(type: Jar, dependsOn: javaCompileTask) {
+//             from javaCompileTask.destinationDir
+//         }
+//     }
+
+//     artifacts {
+//         archives androidSourcesJar
+//         archives androidJavadocJar
+//     }
+// }
+
 afterEvaluate { project ->
-    // some Gradle build hooks ref:
-    // https://www.oreilly.com/library/view/gradle-beyond-the/9781449373801/ch03.html
-    task androidJavadoc(type: Javadoc) {
+    tasks.register('androidJavadoc', Javadoc) {
         source = android.sourceSets.main.java.srcDirs
         classpath += files(android.bootClasspath)
-        // classpath += files(project.getConfigurations().getByName('compile').asList())
         include '**/*.java'
     }
-
-    task androidJavadocJar(type: Jar, dependsOn: androidJavadoc) {
-        classifier = 'javadoc'
-        from androidJavadoc.destinationDir
+    tasks.register('androidJavadocJar', Jar) {
+        dependsOn 'androidJavadoc'
+        archiveClassifier.set('javadoc') // Changed from classifier to archiveClassifier
+        from tasks.named('androidJavadoc').get().destinationDir
     }
-
-    task androidSourcesJar(type: Jar) {
-        classifier = 'sources'
+    tasks.register('androidSourcesJar', Jar) {
+        archiveClassifier.set('sources') // Changed from classifier to archiveClassifier
         from android.sourceSets.main.java.srcDirs
         include '**/*.java'
     }
-
     android.libraryVariants.all { variant ->
         def name = variant.name.capitalize()
-        def javaCompileTask = variant.javaCompileProvider.get()
-
-        task "jar${name}"(type: Jar, dependsOn: javaCompileTask) {
-            from javaCompileTask.destinationDir
+        def javaCompileTask = variant.javaCompileProvider
+        tasks.register("jar${name}", Jar) {
+            dependsOn javaCompileTask
+            archiveClassifier.set(name.toLowerCase()) // Assuming you want to use the variant name as classifier
+            from javaCompileTask.get().destinationDir
         }
     }
-
     artifacts {
-        archives androidSourcesJar
-        archives androidJavadocJar
+        archives tasks.named('androidSourcesJar')
+        archives tasks.named('androidJavadocJar')
     }
 }

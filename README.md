@@ -10,7 +10,7 @@ Open your React Native project's `package.json` file and add the PayHere React N
 ```json
 {
   "dependencies": {
-    "@payhere/payhere-mobilesdk-reactnative": "4.0.11"
+    "@payhere/payhere-mobilesdk-reactnative": "4.0.12"
   }
 }
 ```
@@ -28,6 +28,8 @@ react-native link @payhere/payhere-mobilesdk-reactnative
 
 Open up the (outermost) `build.gradle` file in your Android project and add the repository. 
 
+# v4.0.11 and bellow
+
 ```groovy
 allprojects {
     repositories {
@@ -39,6 +41,21 @@ allprojects {
 }
 
 ```
+
+# v4.0.12 onward
+
+```groovy
+allprojects {
+    repositories {
+        mavenLocal()
+        maven {
+            url 'https://jitpack.io'
+        }
+    }
+}
+
+```
+
 ##### b. Allow Manifest attribute merge 
 
 Open up the `AndroidManifest.xml` file in your Anrdoid project and make the following changes.
