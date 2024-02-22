@@ -28,7 +28,7 @@ react-native link @payhere/payhere-mobilesdk-reactnative
 
 Open up the (outermost) `build.gradle` file in your Android project and add the repository. 
 
-# v4.0.11 and bellow
+##### v4.0.11 and bellow
 
 ```groovy
 allprojects {
@@ -42,7 +42,7 @@ allprojects {
 
 ```
 
-# v4.0.12 onward
+##### v4.0.12 onward
 
 ```groovy
 allprojects {
