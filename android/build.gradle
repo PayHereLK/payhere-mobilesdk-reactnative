@@ -81,7 +81,7 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.github.PayHereDevs:payhere-android-sdk:v3.0.14'
+    implementation 'com.github.PayHereDevs:payhere-android-sdk:v3.0.16'
     implementation 'com.google.code.gson:gson:2.8.0'
 }
 
