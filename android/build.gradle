@@ -30,7 +30,6 @@ buildscript {
     if (project == rootProject) {
         repositories {
             google()
-            jcenter()
             maven {
                 // PayHere Android
                 url 'https://jitpack.io'
@@ -75,13 +74,12 @@ repositories {
         url 'https://jitpack.io'
     }
     google()
-    jcenter()
 }
 
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.github.PayHereDevs:payhere-android-sdk:v3.0.16'
+    implementation 'com.github.PayHereDevs:payhere-android-sdk:v3.0.18'
     implementation 'com.google.code.gson:gson:2.8.0'
 }
 
