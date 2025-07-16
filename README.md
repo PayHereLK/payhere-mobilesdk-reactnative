@@ -10,7 +10,7 @@ Open your React Native project's `package.json` file and add the PayHere React N
 ```json
 {
   "dependencies": {
-    "@payhere/payhere-mobilesdk-reactnative": "4.0.15"
+    "@payhere/payhere-mobilesdk-reactnative": "4.1.0"
   }
 }
 ```
@@ -70,8 +70,12 @@ platform :ios, '11.0'
 use_react_native!(:path => config["reactNativePath"])
 
 # Add these TWO lines just below 'use_react_native!'
-pod 'payHereSDK', :git => 'https://github.com/PayHereDevs/payhere-mobilesdk-ios-rb.git'
+pod 'payHereSDK', :git => 'https://github.com/PayHereLK/payhere-mobilesdk-ios.git'
 pod 'payhere-mobilesdk-reactnative', :path => '../node_modules/@payhere/payhere-mobilesdk-reactnative'
+
+# Add these TWO lines inside the target
+use_frameworks!
+pod 'SDWebImage', :modular_headers => true
 ```
 3. Run the following command inside the 'ios' folder.
 ```sh

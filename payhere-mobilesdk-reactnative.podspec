@@ -19,6 +19,6 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.dependency "React"
-  s.dependency "payHereSDK", '= 3.0.5'
+  s.dependency "payHereSDK", '= 3.1.1'
 end
 
